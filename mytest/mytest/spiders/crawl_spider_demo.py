@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
-import scrapy
+#import scrapy
 from scrapy.spiders import CrawlSpider, Rule
 from scrapy.linkextractors import LinkExtractor
 
 class MyCrawlSpider(CrawlSpider):
+    '''
+    继承自CrawlSpider的demo
+    '''
     name = 'sp2'
     allowed_domains = ['quotes.toscrape.com']
     start_urls = ['http://quotes.toscrape.com/']
