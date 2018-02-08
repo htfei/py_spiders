@@ -1,11 +1,11 @@
 #-*- coding:utf-8 -*-
 
 import requests
-import threading
 import time
 import json
 import base64
 from PIL import Image
+#import threading
 #import ocr
 requests.packages.urllib3.disable_warnings()
 from daili import get_proxys,chose_proxy,del_proxy
@@ -37,11 +37,11 @@ class PetChain():
         print('status_code:',r.status_code,' find dog :',len(pets))      
         for pet in pets:         
             # 筛选目标狗 # amount/价格 rareDegree/稀有程度:4神话 3史诗           
-            if float(pet['amount']) <= 2000 : # and int(pet['petId']) <= 30000 :
+            if float(pet['amount']) <= 2000 and int(pet['petId']) <= 30000 :
                 #print(pet)
-                #self.buy_pet(pet)   
-                t = threading.Thread(target=self.buy_pet, args=(pet,))
-                t.start() 
+                self.buy_pet(pet)   
+                #t = threading.Thread(target=self.buy_pet, args=(pet,)) # 多线程会导致抢占IO,无法输入验证码报错，故暂时不采用多线程
+                #t.start() 
 
     def genCaptcha(self):
         data = {
@@ -98,7 +98,7 @@ if __name__ == '__main__':
             P.find_pets(now_proxy)
             time.sleep(1)
         except Exception as err:
-            print('main ', err)
+            #print('main ', err)
             #break
             # 发生异常则更换代理
             del_proxy(proxys_list,now_proxy)
