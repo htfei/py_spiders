@@ -1,14 +1,14 @@
 #-*- coding:utf-8 -*-
+import base64
+import json
+import time
 
 import requests
-import time
-import json
-import base64
-from PIL import Image
-#import threading
-#import ocr
-requests.packages.urllib3.disable_warnings()
-from daili import get_proxys,chose_proxy,del_proxy
+import urllib3
+
+from daili import chose_proxy, del_proxy, get_proxys
+
+urllib3.disable_warnings()  # requests.packages.urllib3.disable_warnings() 已经弃用，请改用前者
 
 class PetChain():
     isAuto = 0
@@ -37,11 +37,12 @@ class PetChain():
         print('status_code:',r.status_code,' find dog :',len(pets))      
         for pet in pets:         
             # 筛选目标狗 # amount/价格 rareDegree/稀有程度:4神话 3史诗           
-            if float(pet['amount']) <= 2000 and int(pet['petId']) <= 30000 :
+            if float(pet['amount']) <= 2000 : #and int(pet['petId']) <= 30000 :
                 #print(pet)
-                self.buy_pet(pet)   
+                self.buy_pet(pet)  
                 #t = threading.Thread(target=self.buy_pet, args=(pet,)) # 多线程会导致抢占IO,无法输入验证码报错，故暂时不采用多线程
                 #t.start() 
+                break
 
     def genCaptcha(self):
         data = {
@@ -49,7 +50,7 @@ class PetChain():
             "requestId": int(round(time.time() * 1000)),
             "tpl": "",
         }
-        page = requests.post("https://pet-chain.baidu.com/data/captcha/gen", headers=self.headers, data=json.dumps(data), timeout=2)
+        page = requests.post("https://pet-chain.baidu.com/data/captcha/gen", headers=self.headers, data=json.dumps(data), timeout=2,verify=False)
         jPage = page.json()
         if jPage.get(u"errorMsg") == "success":
             self.seed = jPage.get(u"data").get(u"seed")
@@ -77,12 +78,9 @@ class PetChain():
             "tpl": ""
         }
         url = 'https://pet-chain.baidu.com/data/txn/create'
-        try:
-            r = requests.post(url, data=json.dumps(data),headers=self.headers, verify=False)
-            msg = r.json()['errorMsg']
-            print('Buy Dog {0} ,msg: {1}'.format(pet["petId"], msg))
-        except Exception as err:
-            print('buy_pet ',err)
+        r = requests.post(url, data=json.dumps(data),headers=self.headers, verify=False)
+        msg = r.json()['errorMsg']
+        print('Buy Dog {0} ,msg: {1}'.format(pet["petId"], msg))
 
 
 if __name__ == '__main__':
@@ -104,4 +102,3 @@ if __name__ == '__main__':
             del_proxy(proxys_list,now_proxy)
             now_proxy = chose_proxy(proxys_list)
             print("使用代理:", now_proxy)
-            

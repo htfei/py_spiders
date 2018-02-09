@@ -32,7 +32,7 @@ def get_proxys(page=1):
                       'Accept-Language': 'zh-CN,zh;q=0.8',
                       }
     # get请求
-    target_response = S.get(url=target_url, headers=target_headers)
+    target_response = S.get(url=target_url, headers=target_headers, verify=False)
     # utf-8编码
     target_response.encoding = 'utf-8'
     # 获取网页信息
@@ -113,8 +113,8 @@ def chose_proxy(proxys_list):
     now_proxy = random.choice(proxys_list)
     return now_proxy
 
-def del_proxy(proxys_list, now_proxy):
-    #去掉不能使用的IP
+#去掉不能使用的IP
+def del_proxy(proxys_list, now_proxy):  
     proxys_list.remove(now_proxy)
 
 if __name__ == '__main__':
@@ -126,7 +126,7 @@ if __name__ == '__main__':
 
     while True:
         try:
-            rsp = requests.get("https://pet-chain.baidu.com", proxies=now_proxy)
+            rsp = requests.get("https://pet-chain.baidu.com", proxies=now_proxy, verify=False)
             print(rsp.status_code)
             break
         except Exception as err:
