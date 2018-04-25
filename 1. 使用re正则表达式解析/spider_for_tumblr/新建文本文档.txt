@@ -1,0 +1,58 @@
+
+
+
+--右键--查看元素  （后面不需要：--鼠标查看--点击视频-- ）（此时定位到 "post_content"."vjs-big-play-button"）
+--往上找到兄弟标签<video>
+--视频预览图： <video>.poster="https://31.media.tumblr.com/tumblr_o2zrb0ui6z1sdmqya_frame1.jpg" 
+--视频伪地址： <video>.<source src="https://91bing.tumblr.com/video_file/t:_qn4Vmi0TwV0RASLlL5UAg/152500410141/tumblr_o2zrb0ui6z1sdmqya/480"
+			type="video/mp4">
+
+伪地址"https://91bing.tumblr.com/video_file/t:_qn4Vmi0TwV0RASLlL5UAg/152500410141/tumblr_o2zrb0ui6z1sdmqya/480"在浏览器中打开即可得到真实地址
+真实地址："https://vtt.tumblr.com/tumblr_o2zrb0ui6z1sdmqya_480.mp4#_=_"
+
+分析命名规律也可直接推测出真实地址：
+固定头：https://vtt.tumblr.com/  
+内容： tumblr_o2zrb0ui6z1sdmqya/480 转 tumblr_o2zrb0ui6z1sdmqya_480
+后缀名： type="video/mp4" -> .mp4
+综合起来即"https://vtt.tumblr.com/tumblr_o2zrb0ui6z1sdmqya_480.mp4#_=_"
+
+
+
+测试第二个：
+视频预览图：https://68.media.tumblr.com/tumblr_ohf6v0NBp21vvwbi9_smart1.jpg
+视频伪下载地址：https://91bing.tumblr.com/video_file/t:_qn4Vmi0TwV0RASLlL5UAg/156533635016/tumblr_ohf6v0NBp21vvwbi9/480
+视频真下载地址：https://vtt.tumblr.com/tumblr_ohf6v0NBp21vvwbi9_480.mp4#_=_ （可知上面的地址推测正确）
+其他信息：
+原始发布者：eumransonyeon 
+原始发布号：153830201928 （原始发布者+原始发布号 = 原始发布页面地址为 http://eumransonyeon.tumblr.com/post/153830201928/）
+总热度 ：163181 （网友喜欢和转发之和）
+当前转发者：91bing  postid:。。。
+当前转发者的 配字： 。。。
+转自谁：koreanbitchs  http://koreanbitchs.tumblr.com/ 
+
+
+
+
+测试第三个（主页视频）：
+https://68.media.tumblr.com/tumblr_oewqr62W6Q1vnkos9_smart1.jpg
+https://whitetigerwelfare.tumblr.com/video_file/t:5qne6s_N1GjJpCrOyOsXBQ/157926626546/tumblr_oewqr62W6Q1vnkos9
+https://vtt.tumblr.com/tumblr_oewqr62W6Q1vnkos9.mp4#_=_
+
+
+
+
+初始需求：点击某个视频可以直观的看到其对应的 预览图和 下载地址
+
+中级需求： 对已加载的页面进行分析，列出所有视频的 预览图，下载地址，热度，作者，发布号
+	1.存入数据库，根据（作者，发布号）生成唯一的标识符。新添加字段（入库时间 ，是否已下载到本地，标签）
+	2. 生成一个本地网页，列出所有满足查找条件的数据并展示。
+	3. 可在页面对一条数据进行操作（增删查改标签，下载删除视频，删除本条数据记录）
+
+
+设计方案： （考虑到动态加载网页时可以动态获取连接，最好采用google插件的方式，但需要重新学习，暂时不采用）
+	采集器采用python爬虫。
+	数据库用sqlite
+	网页目前不太会。
+
+采集器：
+	设计一个资源提取器，输入网页源码，提取规则，输出需要的内容到指定文件。
