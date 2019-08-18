@@ -23,6 +23,7 @@ class MyCrawlSpider(CrawlSpider):
         #inspect_response(response, self) # shell调试
         for quote in response.xpath('//div[@class="author-details"]'):
             return {
+                'author': quote.xpath('.//h3[@class="author-title"]/text()').extract_first(),
                 'borndate': quote.xpath('.//span[@class="author-born-date"]/text()').extract_first(),
                 'bornloc': quote.xpath('.//span[@class="author-born-location"]/text()').extract_first(),
             }
